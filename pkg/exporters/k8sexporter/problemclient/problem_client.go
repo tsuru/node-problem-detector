@@ -24,6 +24,8 @@ import (
 	"os"
 	"path/filepath"
 
+	types2 "k8s.io/node-problem-detector/pkg/types"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -50,6 +52,10 @@ type Client interface {
 	// GetNode returns the Node object of the node on which the
 	// node-problem-detector runs.
 	GetNode(ctx context.Context) (*v1.Node, error)
+	// TaintNode taints the node if tainting is enabled on the config file on specific conditions
+	TaintNode(ctx context.Context, condition types2.Condition) error
+	// UntaintNode removes taint from node if tainting is enabled on the config file on specific conditions, and problem recovered
+	UntaintNode(ctx context.Context, condition types2.Condition) error
 }
 
 type nodeProblemClient struct {
@@ -133,6 +139,58 @@ func (c *nodeProblemClient) GetNode(ctx context.Context) (*v1.Node, error) {
 	// To reduce the load on APIServer & etcd, we are serving GET operations from
 	// apiserver cache (the data might be slightly delayed).
 	return c.client.Nodes().Get(ctx, c.nodeName, metav1.GetOptions{ResourceVersion: "0"})
+}
+
+// TaintNode taints the node if tainting is enabled and problem occurred
+func (c *nodeProblemClient) TaintNode(ctx context.Context, condition types2.Condition) error {
+	node, err := c.client.Nodes().Get(ctx, c.nodeName, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	for _, v := range node.Spec.Taints {
+		if v.Key == condition.TaintKey && v.Value == condition.TaintValue && v.Effect == v1.TaintEffect(condition.TaintEffect) {
+			return nil
+		}
+	}
+
+	node.Spec.Taints = append(node.Spec.Taints, v1.Taint{
+		Key:    condition.TaintKey,
+		Value:  condition.TaintValue,
+		Effect: v1.TaintEffect(condition.TaintEffect),
+	})
+
+	_, err = c.client.Nodes().Update(ctx, node, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UntaintNode removes taint from node if tainting is enabled on the config file on specific conditions, and problem recovered
+func (c *nodeProblemClient) UntaintNode(ctx context.Context, condition types2.Condition) error {
+	node, err := c.client.Nodes().Get(ctx, c.nodeName, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	var taints []v1.Taint
+	for _, v := range node.Spec.Taints {
+		if v.Key == condition.TaintKey && v.Value == condition.TaintValue && v.Effect == v1.TaintEffect(condition.TaintEffect) {
+			continue
+		}
+
+		taints = append(taints, v)
+	}
+
+	node.Spec.Taints = taints
+	_, err = c.client.Nodes().Update(ctx, node, metav1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // generatePatch generates condition patch

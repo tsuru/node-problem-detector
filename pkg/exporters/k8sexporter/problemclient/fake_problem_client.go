@@ -22,6 +22,8 @@ import (
 	"reflect"
 	"sync"
 
+	"k8s.io/node-problem-detector/pkg/types"
+
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -71,6 +73,16 @@ func (f *FakeProblemClient) SetConditions(ctx context.Context, conditions []v1.N
 		f.conditions[condition.Type] = condition
 	}
 	return nil
+}
+
+// TaintNode taints the node if tainting is enabled and problem occurred
+func (f *FakeProblemClient) TaintNode(ctx context.Context, condition types.Condition) error {
+	return fmt.Errorf("TaintNode() not implemented")
+}
+
+// UntaintNode removes taint from node if tainting is enabled and problem resolved
+func (f *FakeProblemClient) UntaintNode(ctx context.Context, condition types.Condition) error {
+	return fmt.Errorf("UntaintNode() not implemented")
 }
 
 // GetConditions is a fake mimic of GetConditions, it returns the conditions cached internally.

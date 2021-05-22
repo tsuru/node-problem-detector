@@ -18,6 +18,7 @@ package condition
 
 import (
 	"context"
+	"fmt"
 	"reflect"
 	"sync"
 	"time"
@@ -28,6 +29,8 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/utils/clock"
+
+	"github.com/golang/glog"
 
 	"k8s.io/klog/v2"
 )
@@ -159,6 +162,24 @@ func (c *conditionManager) sync(ctx context.Context) {
 	conditions := []v1.NodeCondition{}
 	for i := range c.conditions {
 		conditions = append(conditions, problemutil.ConvertToAPICondition(c.conditions[i]))
+
+		if c.conditions[i].TaintEnabled && c.conditions[i].Status == types.True {
+			taintString := fmt.Sprintf("%s=%s:%s", c.conditions[i].TaintKey, c.conditions[i].TaintValue,
+				c.conditions[i].TaintEffect)
+			glog.Infof("tainting is enabled and condition status is True, tainting with %s\n", taintString)
+			if err := c.client.TaintNode(ctx, c.conditions[i]); err != nil {
+				glog.Errorf("failed to add taint %v to node: %v", taintString, err)
+				return
+			}
+		} else if c.conditions[i].TaintEnabled && c.conditions[i].Status == types.False {
+			taintString := fmt.Sprintf("%s=%s:%s", c.conditions[i].TaintKey, c.conditions[i].TaintValue,
+				c.conditions[i].TaintEffect)
+			glog.Infof("tainting is enabled and condition status is False, removing taint %s\n", taintString)
+			if err := c.client.UntaintNode(ctx, c.conditions[i]); err != nil {
+				glog.Errorf("failed to remove taint %v from node: %v", taintString, err)
+				return
+			}
+		}
 	}
 	if err := c.client.SetConditions(ctx, conditions); err != nil {
 		// The conditions will be updated again in future sync
