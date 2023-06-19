@@ -53,9 +53,9 @@ type Client interface {
 	// node-problem-detector runs.
 	GetNode(ctx context.Context) (*v1.Node, error)
 	// TaintNode taints the node if tainting is enabled on the config file on specific conditions
-	TaintNode(ctx context.Context, condition types2.Condition) error
+	TaintNode(ctx context.Context, node *v1.Node, condition types2.Condition) error
 	// UntaintNode removes taint from node if tainting is enabled on the config file on specific conditions, and problem recovered
-	UntaintNode(ctx context.Context, condition types2.Condition) error
+	UntaintNode(ctx context.Context, node *v1.Node, condition types2.Condition) error
 }
 
 type nodeProblemClient struct {
@@ -142,22 +142,11 @@ func (c *nodeProblemClient) GetNode(ctx context.Context) (*v1.Node, error) {
 }
 
 // TaintNode taints the node if tainting is enabled and problem occurred
-func (c *nodeProblemClient) TaintNode(ctx context.Context, condition types2.Condition) error {
-	node, err := c.client.Nodes().Get(ctx, c.nodeName, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, v := range node.Spec.Taints {
-		if v.Key == condition.TaintKey && v.Value == condition.TaintValue && v.Effect == v1.TaintEffect(condition.TaintEffect) {
-			return nil
-		}
-	}
-
+func (c *nodeProblemClient) TaintNode(ctx context.Context, node *v1.Node, condition types2.Condition) (err error) {
 	node.Spec.Taints = append(node.Spec.Taints, v1.Taint{
-		Key:    condition.TaintKey,
-		Value:  condition.TaintValue,
-		Effect: v1.TaintEffect(condition.TaintEffect),
+		Key:    condition.TaintConfig.Key,
+		Value:  condition.TaintConfig.Value,
+		Effect: v1.TaintEffect(condition.TaintConfig.Effect),
 	})
 
 	_, err = c.client.Nodes().Update(ctx, node, metav1.UpdateOptions{})
@@ -169,15 +158,10 @@ func (c *nodeProblemClient) TaintNode(ctx context.Context, condition types2.Cond
 }
 
 // UntaintNode removes taint from node if tainting is enabled on the config file on specific conditions, and problem recovered
-func (c *nodeProblemClient) UntaintNode(ctx context.Context, condition types2.Condition) error {
-	node, err := c.client.Nodes().Get(ctx, c.nodeName, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
+func (c *nodeProblemClient) UntaintNode(ctx context.Context, node *v1.Node, condition types2.Condition) (err error) {
 	var taints []v1.Taint
 	for _, v := range node.Spec.Taints {
-		if v.Key == condition.TaintKey && v.Value == condition.TaintValue && v.Effect == v1.TaintEffect(condition.TaintEffect) {
+		if v.Key == condition.TaintConfig.Key && v.Value == condition.TaintConfig.Value && v.Effect == v1.TaintEffect(condition.TaintConfig.Effect) {
 			continue
 		}
 
@@ -219,4 +203,15 @@ func getNodeRef(namespace, nodeName string) *v1.ObjectReference {
 		UID:       types.UID(nodeName),
 		Namespace: namespace,
 	}
+}
+
+func CheckIfTaintAlreadyExists(node *v1.Node, config types2.TaintConfig) bool {
+	for _, v := range node.Spec.Taints {
+		// returning true since our target node is already tainted
+		if v.Key == config.Key && v.Value == config.Value && v.Effect == v1.TaintEffect(config.Effect) {
+			return true
+		}
+	}
+
+	return false
 }

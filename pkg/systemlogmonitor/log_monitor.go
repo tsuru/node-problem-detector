@@ -197,10 +197,6 @@ func (l *logMonitor) generateStatus(logs []*systemlogtypes.Log, rule systemlogty
 				}
 				condition.Status = types.True
 				condition.Reason = rule.Reason
-				condition.TaintEnabled = rule.TaintEnabled
-				condition.TaintKey = rule.TaintKey
-				condition.TaintValue = rule.TaintValue
-				condition.TaintEffect = rule.TaintEffect
 				changedConditions = append(changedConditions, condition)
 				break
 			}

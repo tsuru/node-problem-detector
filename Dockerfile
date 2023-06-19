@@ -39,6 +39,8 @@ RUN GOARCH=${TARGETARCH} make bin/node-problem-detector bin/health-checker bin/l
 ARG BASEIMAGE
 FROM --platform=${TARGETPLATFORM} ${BASEIMAGE}
 
+RUN echo foo
+
 LABEL maintainer="Random Liu <lantaol@google.com>"
 
 RUN clean-install util-linux bash libsystemd-dev
