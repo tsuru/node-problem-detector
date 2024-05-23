@@ -30,8 +30,6 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/utils/clock"
 
-	"github.com/golang/glog"
-
 	"k8s.io/klog/v2"
 )
 
@@ -174,7 +172,7 @@ func (c *conditionManager) sync(ctx context.Context) {
 
 		node, err := c.client.GetNode(ctx)
 		if err != nil {
-			glog.Errorf("failed to get node: %v", err)
+			klog.Errorf("failed to get node: %v", err)
 			continue
 		}
 
@@ -187,30 +185,30 @@ func (c *conditionManager) sync(ctx context.Context) {
 				continue
 			}
 
-			glog.Infof("for condition %s, tainting is enabled and status is True, tainting with %s",
+			klog.Infof("for condition %s, tainting is enabled and status is True, tainting with %s",
 				condition.Type, taintStr)
 
 			if err := c.client.TaintNode(ctx, node, condition); err != nil {
-				glog.Errorf("failed to add taint %v: %v", taintStr, err)
+				klog.Errorf("failed to add taint %v: %v", taintStr, err)
 				continue
 			}
 
-			glog.Infof("successfully tainted node with %s", taintStr)
+			klog.Infof("successfully tainted node with %s", taintStr)
 		case types.False:
 			if !taintExists {
 				// we are skipping here since node is not tainted with our TaintConfig
 				continue
 			}
 
-			glog.Infof("for condition %s, tainting is enabled and condition status is False, removing taint %s",
+			klog.Infof("for condition %s, tainting is enabled and condition status is False, removing taint %s",
 				condition.Type, taintStr)
 
 			if err := c.client.UntaintNode(ctx, node, condition); err != nil {
-				glog.Errorf("failed to remove taint %v: %v", taintStr, err)
+				klog.Errorf("failed to remove taint %v: %v", taintStr, err)
 				continue
 			}
 
-			glog.Infof("successfully removed taint %s from node", taintStr)
+			klog.Infof("successfully removed taint %s from node", taintStr)
 		}
 	}
 	if err := c.client.SetConditions(ctx, conditions); err != nil {
