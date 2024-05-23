@@ -50,3 +50,5 @@ jobs:
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache
         platforms: linux/amd64
+        build-args: |
+          BASEIMAGE=registry.k8s.io/build-image/debian-base:bookworm-v1.0.3
