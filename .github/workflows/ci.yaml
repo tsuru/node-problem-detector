@@ -14,7 +14,7 @@ jobs:
       with:
         version: v1.58
     - run: |
-        apt-get install libsystemd-dev
+        apt-get -y install libsystemd-dev
         make test
 
   node-problem-detector:
