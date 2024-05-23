@@ -37,8 +37,8 @@ func main() {
 		}
 	})
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.CommandLine.MarkHidden("vmodule")
-	pflag.CommandLine.MarkHidden("logtostderr")
+	_ = pflag.CommandLine.MarkHidden("vmodule")
+	_ = pflag.CommandLine.MarkHidden("logtostderr")
 
 	npdo := options.NewNodeProblemDetectorOptions()
 	npdo.AddFlags(pflag.CommandLine)

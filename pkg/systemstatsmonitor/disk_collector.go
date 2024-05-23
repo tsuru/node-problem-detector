@@ -188,10 +188,10 @@ func (dc *diskCollector) recordIOCounters(ioCountersStats map[string]disk.IOCoun
 		dc.lastWeightedIO[deviceName] = ioCountersStat.WeightedIO
 
 		if dc.mIOTime != nil {
-			dc.mIOTime.Record(tags, int64(ioCountersStat.IoTime-lastIOTime))
+			_ = dc.mIOTime.Record(tags, int64(ioCountersStat.IoTime-lastIOTime))
 		}
 		if dc.mWeightedIO != nil {
-			dc.mWeightedIO.Record(tags, int64(ioCountersStat.WeightedIO-lastWeightedIO))
+			_ = dc.mWeightedIO.Record(tags, int64(ioCountersStat.WeightedIO-lastWeightedIO))
 		}
 		if historyExist {
 			avgQueueLen := float64(0.0)
@@ -200,7 +200,7 @@ func (dc *diskCollector) recordIOCounters(ioCountersStats map[string]disk.IOCoun
 				avgQueueLen = float64(ioCountersStat.WeightedIO-lastWeightedIO) / diffSampleTimeMs
 			}
 			if dc.mAvgQueueLen != nil {
-				dc.mAvgQueueLen.Record(tags, avgQueueLen)
+				_ = dc.mAvgQueueLen.Record(tags, avgQueueLen)
 			}
 		}
 
@@ -208,19 +208,19 @@ func (dc *diskCollector) recordIOCounters(ioCountersStats map[string]disk.IOCoun
 		tags = map[string]string{deviceNameLabel: deviceName, directionLabel: "read"}
 
 		if dc.mOpsCount != nil {
-			dc.mOpsCount.Record(tags, int64(ioCountersStat.ReadCount-dc.lastReadCount[deviceName]))
+			_ = dc.mOpsCount.Record(tags, int64(ioCountersStat.ReadCount-dc.lastReadCount[deviceName]))
 			dc.lastReadCount[deviceName] = ioCountersStat.ReadCount
 		}
 		if dc.mMergedOpsCount != nil {
-			dc.mMergedOpsCount.Record(tags, int64(ioCountersStat.MergedReadCount-dc.lastMergedReadCount[deviceName]))
+			_ = dc.mMergedOpsCount.Record(tags, int64(ioCountersStat.MergedReadCount-dc.lastMergedReadCount[deviceName]))
 			dc.lastMergedReadCount[deviceName] = ioCountersStat.MergedReadCount
 		}
 		if dc.mOpsBytes != nil {
-			dc.mOpsBytes.Record(tags, int64(ioCountersStat.ReadBytes-dc.lastReadBytes[deviceName]))
+			_ = dc.mOpsBytes.Record(tags, int64(ioCountersStat.ReadBytes-dc.lastReadBytes[deviceName]))
 			dc.lastReadBytes[deviceName] = ioCountersStat.ReadBytes
 		}
 		if dc.mOpsTime != nil {
-			dc.mOpsTime.Record(tags, int64(ioCountersStat.ReadTime-dc.lastReadTime[deviceName]))
+			_ = dc.mOpsTime.Record(tags, int64(ioCountersStat.ReadTime-dc.lastReadTime[deviceName]))
 			dc.lastReadTime[deviceName] = ioCountersStat.ReadTime
 		}
 
@@ -228,19 +228,19 @@ func (dc *diskCollector) recordIOCounters(ioCountersStats map[string]disk.IOCoun
 		tags = map[string]string{deviceNameLabel: deviceName, directionLabel: "write"}
 
 		if dc.mOpsCount != nil {
-			dc.mOpsCount.Record(tags, int64(ioCountersStat.WriteCount-dc.lastWriteCount[deviceName]))
+			_ = dc.mOpsCount.Record(tags, int64(ioCountersStat.WriteCount-dc.lastWriteCount[deviceName]))
 			dc.lastWriteCount[deviceName] = ioCountersStat.WriteCount
 		}
 		if dc.mMergedOpsCount != nil {
-			dc.mMergedOpsCount.Record(tags, int64(ioCountersStat.MergedWriteCount-dc.lastMergedWriteCount[deviceName]))
+			_ = dc.mMergedOpsCount.Record(tags, int64(ioCountersStat.MergedWriteCount-dc.lastMergedWriteCount[deviceName]))
 			dc.lastMergedWriteCount[deviceName] = ioCountersStat.MergedWriteCount
 		}
 		if dc.mOpsBytes != nil {
-			dc.mOpsBytes.Record(tags, int64(ioCountersStat.WriteBytes-dc.lastWriteBytes[deviceName]))
+			_ = dc.mOpsBytes.Record(tags, int64(ioCountersStat.WriteBytes-dc.lastWriteBytes[deviceName]))
 			dc.lastWriteBytes[deviceName] = ioCountersStat.WriteBytes
 		}
 		if dc.mOpsTime != nil {
-			dc.mOpsTime.Record(tags, int64(ioCountersStat.WriteTime-dc.lastWriteTime[deviceName]))
+			_ = dc.mOpsTime.Record(tags, int64(ioCountersStat.WriteTime-dc.lastWriteTime[deviceName]))
 			dc.lastWriteTime[deviceName] = ioCountersStat.WriteTime
 		}
 	}
@@ -301,10 +301,10 @@ func (dc *diskCollector) collect() {
 		deviceName := strings.TrimPrefix(partition.Device, "/dev/")
 		fstype := partition.Fstype
 		opttypes := strings.Join(partition.Opts, ",")
-		dc.mBytesUsed.Record(map[string]string{deviceNameLabel: deviceName, fsTypeLabel: fstype, mountOptionLabel: opttypes, stateLabel: "free"}, int64(usageStat.Free))
-		dc.mBytesUsed.Record(map[string]string{deviceNameLabel: deviceName, fsTypeLabel: fstype, mountOptionLabel: opttypes, stateLabel: "used"}, int64(usageStat.Used))
+		_ = dc.mBytesUsed.Record(map[string]string{deviceNameLabel: deviceName, fsTypeLabel: fstype, mountOptionLabel: opttypes, stateLabel: "free"}, int64(usageStat.Free))
+		_ = dc.mBytesUsed.Record(map[string]string{deviceNameLabel: deviceName, fsTypeLabel: fstype, mountOptionLabel: opttypes, stateLabel: "used"}, int64(usageStat.Used))
 		if dc.mPercentUsed != nil {
-			dc.mPercentUsed.Record(map[string]string{deviceNameLabel: deviceName, fsTypeLabel: fstype, mountOptionLabel: opttypes, stateLabel: "used"}, float64(usageStat.UsedPercent))
+			_ = dc.mPercentUsed.Record(map[string]string{deviceNameLabel: deviceName, fsTypeLabel: fstype, mountOptionLabel: opttypes, stateLabel: "used"}, float64(usageStat.UsedPercent))
 		}
 	}
 

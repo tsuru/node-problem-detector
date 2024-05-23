@@ -74,6 +74,6 @@ func (hc *hostCollector) collect() {
 	}
 
 	if hc.uptime != nil {
-		hc.uptime.Record(hc.tags, int64(uptime))
+		_ = hc.uptime.Record(hc.tags, int64(uptime))
 	}
 }

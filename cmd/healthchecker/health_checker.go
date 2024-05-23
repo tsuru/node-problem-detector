@@ -39,8 +39,16 @@ func main() {
 		}
 	})
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.CommandLine.MarkHidden("vmodule")
-	pflag.CommandLine.MarkHidden("logtostderr")
+	err := pflag.CommandLine.MarkHidden("vmodule")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(int(types.Unknown))
+	}
+	err = pflag.CommandLine.MarkHidden("logtostderr")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(int(types.Unknown))
+	}
 
 	hco := options.NewHealthCheckerOptions()
 	hco.AddFlags(pflag.CommandLine)

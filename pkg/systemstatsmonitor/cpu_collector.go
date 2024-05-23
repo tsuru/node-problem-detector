@@ -187,34 +187,34 @@ func (cc *cpuCollector) recordUsage() {
 	}
 	timersStat := timersStats[0]
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "user"}, clockTick*timersStat.User-cc.lastUsageTime["user"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "user"}, clockTick*timersStat.User-cc.lastUsageTime["user"])
 	cc.lastUsageTime["user"] = clockTick * timersStat.User
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "system"}, clockTick*timersStat.System-cc.lastUsageTime["system"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "system"}, clockTick*timersStat.System-cc.lastUsageTime["system"])
 	cc.lastUsageTime["system"] = clockTick * timersStat.System
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "idle"}, clockTick*timersStat.Idle-cc.lastUsageTime["idle"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "idle"}, clockTick*timersStat.Idle-cc.lastUsageTime["idle"])
 	cc.lastUsageTime["idle"] = clockTick * timersStat.Idle
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "nice"}, clockTick*timersStat.Nice-cc.lastUsageTime["nice"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "nice"}, clockTick*timersStat.Nice-cc.lastUsageTime["nice"])
 	cc.lastUsageTime["nice"] = clockTick * timersStat.Nice
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "iowait"}, clockTick*timersStat.Iowait-cc.lastUsageTime["iowait"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "iowait"}, clockTick*timersStat.Iowait-cc.lastUsageTime["iowait"])
 	cc.lastUsageTime["iowait"] = clockTick * timersStat.Iowait
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "irq"}, clockTick*timersStat.Irq-cc.lastUsageTime["irq"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "irq"}, clockTick*timersStat.Irq-cc.lastUsageTime["irq"])
 	cc.lastUsageTime["irq"] = clockTick * timersStat.Irq
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "softirq"}, clockTick*timersStat.Softirq-cc.lastUsageTime["softirq"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "softirq"}, clockTick*timersStat.Softirq-cc.lastUsageTime["softirq"])
 	cc.lastUsageTime["softirq"] = clockTick * timersStat.Softirq
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "steal"}, clockTick*timersStat.Steal-cc.lastUsageTime["steal"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "steal"}, clockTick*timersStat.Steal-cc.lastUsageTime["steal"])
 	cc.lastUsageTime["steal"] = clockTick * timersStat.Steal
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "guest"}, clockTick*timersStat.Guest-cc.lastUsageTime["guest"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "guest"}, clockTick*timersStat.Guest-cc.lastUsageTime["guest"])
 	cc.lastUsageTime["guest"] = clockTick * timersStat.Guest
 
-	cc.mUsageTime.Record(map[string]string{stateLabel: "guest_nice"}, clockTick*timersStat.GuestNice-cc.lastUsageTime["guest_nice"])
+	_ = cc.mUsageTime.Record(map[string]string{stateLabel: "guest_nice"}, clockTick*timersStat.GuestNice-cc.lastUsageTime["guest_nice"])
 	cc.lastUsageTime["guest_nice"] = clockTick * timersStat.GuestNice
 }
 

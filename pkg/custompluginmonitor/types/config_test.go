@@ -218,7 +218,10 @@ func TestCustomPluginConfigApplyConfiguration(t *testing.T) {
 	}
 
 	for desp, utMeta := range utMetas {
-		(&utMeta.Orig).ApplyConfiguration()
+		err := (&utMeta.Orig).ApplyConfiguration()
+		if err != nil {
+			t.Errorf("Error in apply configuration for %q. Error: %v", desp, err)
+		}
 		if !reflect.DeepEqual(utMeta.Orig, utMeta.Wanted) {
 			t.Errorf("Error in apply configuration for %q", desp)
 			t.Errorf("Wanted: %+v. \nGot: %+v", utMeta.Wanted, utMeta.Orig)

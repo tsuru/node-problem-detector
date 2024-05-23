@@ -219,6 +219,10 @@ func (nc *netCollector) mustRegisterMetric(metricID metrics.MetricID, descriptio
 
 func (nc *netCollector) recordNetDev() {
 	fs, err := procfs.NewFS(nc.procPath)
+	if err != nil {
+		klog.Errorf("Failed to open procfs: %v", err)
+		return
+	}
 	stats, err := fs.NetDev()
 	if err != nil {
 		klog.Errorf("Failed to retrieve net dev stat: %v", err)
@@ -281,7 +285,7 @@ func (r ifaceStatRecorder) RecordWithSameTags(stat procfs.NetDevLine, tags map[s
 	// Range all registered collector and record its measurement with same tags
 	for metricID, collector := range r.collectors {
 		measurement := collector.exporter(stat)
-		collector.metric.Record(tags, measurement)
+		_ = collector.metric.Record(tags, measurement)
 		klog.V(6).Infof("Metric %q record measurement %d with tags %v", metricID, measurement, tags)
 	}
 }

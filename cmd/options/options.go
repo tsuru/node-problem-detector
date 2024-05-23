@@ -102,10 +102,10 @@ func NewNodeProblemDetectorOptions() *NodeProblemDetectorOptions {
 func (npdo *NodeProblemDetectorOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringSliceVar(&npdo.SystemLogMonitorConfigPaths, "system-log-monitors",
 		[]string{}, "List of paths to system log monitor config files, comma separated.")
-	fs.MarkDeprecated("system-log-monitors", "replaced by --config.system-log-monitor. NPD will panic if both --system-log-monitors and --config.system-log-monitor are set.")
+	_ = fs.MarkDeprecated("system-log-monitors", "replaced by --config.system-log-monitor. NPD will panic if both --system-log-monitors and --config.system-log-monitor are set.")
 	fs.StringSliceVar(&npdo.CustomPluginMonitorConfigPaths, "custom-plugin-monitors",
 		[]string{}, "List of paths to custom plugin monitor config files, comma separated.")
-	fs.MarkDeprecated("custom-plugin-monitors", "replaced by --config.custom-plugin-monitor. NPD will panic if both --custom-plugin-monitors and --config.custom-plugin-monitor are set.")
+	_ = fs.MarkDeprecated("custom-plugin-monitors", "replaced by --config.custom-plugin-monitor. NPD will panic if both --custom-plugin-monitors and --config.custom-plugin-monitor are set.")
 	fs.BoolVar(&npdo.EnableK8sExporter, "enable-k8s-exporter", true, "Enables reporting to Kubernetes API server.")
 	fs.StringVar(&npdo.EventNamespace, "event-namespace", "", "Namespace for recorded Kubernetes events.")
 	fs.StringVar(&npdo.ApiServerOverride, "apiserver-override",

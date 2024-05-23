@@ -72,7 +72,10 @@ func NewInt64Metric(metricID MetricID, viewName string, description string, unit
 		Aggregation: aggregationMethod,
 		TagKeys:     tagKeys,
 	}
-	view.Register(newView)
+	err = view.Register(newView)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register view %q: %v", viewName, err)
+	}
 
 	metric := Int64Metric{viewName, measure}
 	return &metric, nil

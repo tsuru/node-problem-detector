@@ -40,16 +40,16 @@ func (cc *cpuCollector) recordLoad() {
 	}
 
 	if cc.mRunnableTaskCount != nil {
-		cc.mRunnableTaskCount.Record(map[string]string{}, loadAvg.Load1)
+		_ = cc.mRunnableTaskCount.Record(map[string]string{}, loadAvg.Load1)
 	}
 	if cc.mCpuLoad1m != nil {
-		cc.mCpuLoad1m.Record(map[string]string{}, loadAvg.Load1)
+		_ = cc.mCpuLoad1m.Record(map[string]string{}, loadAvg.Load1)
 	}
 	if cc.mCpuLoad5m != nil {
-		cc.mCpuLoad5m.Record(map[string]string{}, loadAvg.Load5)
+		_ = cc.mCpuLoad5m.Record(map[string]string{}, loadAvg.Load5)
 	}
 	if cc.mCpuLoad15m != nil {
-		cc.mCpuLoad15m.Record(map[string]string{}, loadAvg.Load15)
+		_ = cc.mCpuLoad15m.Record(map[string]string{}, loadAvg.Load15)
 	}
 }
 
@@ -62,6 +62,10 @@ func (cc *cpuCollector) recordSystemStats() {
 	}
 
 	fs, err := procfs.NewFS(cc.procPath)
+	if err != nil {
+		klog.Errorf("Failed to open procfs: %v", err)
+		return
+	}
 	stats, err := fs.Stat()
 	if err != nil {
 		klog.Errorf("Failed to retrieve cpu/process stats: %v", err)
@@ -69,19 +73,19 @@ func (cc *cpuCollector) recordSystemStats() {
 	}
 
 	if cc.mSystemProcessesTotal != nil {
-		cc.mSystemProcessesTotal.Record(map[string]string{}, int64(stats.ProcessCreated))
+		_ = cc.mSystemProcessesTotal.Record(map[string]string{}, int64(stats.ProcessCreated))
 	}
 
 	if cc.mSystemProcsRunning != nil {
-		cc.mSystemProcsRunning.Record(map[string]string{}, int64(stats.ProcessesRunning))
+		_ = cc.mSystemProcsRunning.Record(map[string]string{}, int64(stats.ProcessesRunning))
 	}
 
 	if cc.mSystemProcsBlocked != nil {
-		cc.mSystemProcsBlocked.Record(map[string]string{}, int64(stats.ProcessesBlocked))
+		_ = cc.mSystemProcsBlocked.Record(map[string]string{}, int64(stats.ProcessesBlocked))
 	}
 
 	if cc.mSystemInterruptsTotal != nil {
-		cc.mSystemInterruptsTotal.Record(map[string]string{}, int64(stats.IRQTotal))
+		_ = cc.mSystemInterruptsTotal.Record(map[string]string{}, int64(stats.IRQTotal))
 	}
 
 	if cc.mSystemCPUStat != nil {
@@ -90,25 +94,25 @@ func (cc *cpuCollector) recordSystemStats() {
 			tags[cpuLabel] = fmt.Sprintf("cpu%d", i)
 
 			tags[stageLabel] = "user"
-			cc.mSystemCPUStat.Record(tags, c.User)
+			_ = cc.mSystemCPUStat.Record(tags, c.User)
 			tags[stageLabel] = "nice"
-			cc.mSystemCPUStat.Record(tags, c.Nice)
+			_ = cc.mSystemCPUStat.Record(tags, c.Nice)
 			tags[stageLabel] = "system"
-			cc.mSystemCPUStat.Record(tags, c.System)
+			_ = cc.mSystemCPUStat.Record(tags, c.System)
 			tags[stageLabel] = "idle"
-			cc.mSystemCPUStat.Record(tags, c.Idle)
+			_ = cc.mSystemCPUStat.Record(tags, c.Idle)
 			tags[stageLabel] = "iowait"
-			cc.mSystemCPUStat.Record(tags, c.Iowait)
+			_ = cc.mSystemCPUStat.Record(tags, c.Iowait)
 			tags[stageLabel] = "iRQ"
-			cc.mSystemCPUStat.Record(tags, c.IRQ)
+			_ = cc.mSystemCPUStat.Record(tags, c.IRQ)
 			tags[stageLabel] = "softIRQ"
-			cc.mSystemCPUStat.Record(tags, c.SoftIRQ)
+			_ = cc.mSystemCPUStat.Record(tags, c.SoftIRQ)
 			tags[stageLabel] = "steal"
-			cc.mSystemCPUStat.Record(tags, c.Steal)
+			_ = cc.mSystemCPUStat.Record(tags, c.Steal)
 			tags[stageLabel] = "guest"
-			cc.mSystemCPUStat.Record(tags, c.Guest)
+			_ = cc.mSystemCPUStat.Record(tags, c.Guest)
 			tags[stageLabel] = "guestNice"
-			cc.mSystemCPUStat.Record(tags, c.GuestNice)
+			_ = cc.mSystemCPUStat.Record(tags, c.GuestNice)
 		}
 	}
 }

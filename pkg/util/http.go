@@ -30,11 +30,11 @@ func ReturnHTTPJson(w http.ResponseWriter, object interface{}) {
 	}
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(data)
+	_, _ = w.Write(data)
 }
 
 // ReturnHTTPError generates error http response.
 func ReturnHTTPError(w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusInternalServerError)
-	w.Write([]byte(err.Error()))
+	_, _ = w.Write([]byte(err.Error()))
 }

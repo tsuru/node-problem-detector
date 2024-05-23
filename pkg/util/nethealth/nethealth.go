@@ -54,7 +54,7 @@ func init() {
 }
 
 func monitorTimeElapsed(downloadStartTime time.Time, timeoutSeconds time.Duration) {
-	for true {
+	for {
 		time.Sleep(1 * time.Second)
 		// Check the status of the Get request if possible and check if timeout elapsed
 		if time.Since(downloadStartTime) > timeoutSeconds*time.Second {
@@ -74,7 +74,7 @@ func main() {
 		log.Fatalf("Length reported (%d) is not equal to expected length (%d)", res.ContentLength, objectLength)
 	}
 	log.Printf("HTTP HEAD reports content length: %d - running GET\n", res.ContentLength)
-	res, err = http.Head(objectHashUrl)
+	_, err = http.Head(objectHashUrl)
 	if err != nil {
 		log.Fatalf("Failed to find hash URL %s (%s)", objectHashUrl, err)
 	}

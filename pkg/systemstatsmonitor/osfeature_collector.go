@@ -85,12 +85,12 @@ func (ofc *osFeatureCollector) recordFeaturesFromCmdline(cmdlineArgs []system.Cm
 		}
 	}
 	// Record the feature values.
-	ofc.osFeature.Record(map[string]string{featureLabel: "KTD"}, featuresMap["KTD"])
-	ofc.osFeature.Record(map[string]string{featureLabel: "UnifiedCgroupHierarchy"}, featuresMap["UnifiedCgroupHierarchy"])
+	_ = ofc.osFeature.Record(map[string]string{featureLabel: "KTD"}, featuresMap["KTD"])
+	_ = ofc.osFeature.Record(map[string]string{featureLabel: "UnifiedCgroupHierarchy"}, featuresMap["UnifiedCgroupHierarchy"])
 	if featuresMap["ModuleSigned"] == 1 && featuresMap["LoadPinEnabled"] == 1 {
-		ofc.osFeature.Record(map[string]string{featureLabel: "KernelModuleIntegrity"}, 1)
+		_ = ofc.osFeature.Record(map[string]string{featureLabel: "KernelModuleIntegrity"}, 1)
 	} else {
-		ofc.osFeature.Record(map[string]string{featureLabel: "KernelModuleIntegrity"}, 0)
+		_ = ofc.osFeature.Record(map[string]string{featureLabel: "KernelModuleIntegrity"}, 0)
 	}
 }
 
@@ -136,13 +136,13 @@ func (ofc *osFeatureCollector) recordFeaturesFromModules(modules []system.Module
 	}
 	// record the UnknownModules and GPUSupport
 	if len(unknownModules) > 0 {
-		ofc.osFeature.Record(map[string]string{featureLabel: "UnknownModules",
+		_ = ofc.osFeature.Record(map[string]string{featureLabel: "UnknownModules",
 			valueLabel: strings.Join(unknownModules, ",")}, 1)
 	} else {
-		ofc.osFeature.Record(map[string]string{featureLabel: "UnknownModules"},
+		_ = ofc.osFeature.Record(map[string]string{featureLabel: "UnknownModules"},
 			0)
 	}
-	ofc.osFeature.Record(map[string]string{featureLabel: "GPUSupport"},
+	_ = ofc.osFeature.Record(map[string]string{featureLabel: "GPUSupport"},
 		int64(hasGPUSupport))
 }
 

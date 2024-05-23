@@ -118,7 +118,10 @@ func TestNewProblem(t *testing.T) {
 			pmm, fakeProblemCounter, fakeProblemGauge := NewProblemMetricsManagerStub()
 
 			for idx, reason := range test.reasons {
-				pmm.IncrementProblemCounter(reason, test.counts[idx])
+				err := pmm.IncrementProblemCounter(reason, test.counts[idx])
+				if err != nil {
+					t.Fatalf("failed to increment problem counter: %v", err)
+				}
 			}
 
 			gotMetrics := append(fakeProblemCounter.ListMetrics(), fakeProblemGauge.ListMetrics()...)
@@ -266,7 +269,10 @@ func TestSetProblemGauge(t *testing.T) {
 			pmm, fakeProblemCounter, fakeProblemGauge := NewProblemMetricsManagerStub()
 
 			for _, argument := range test.arguments {
-				pmm.SetProblemGauge(argument.problemType, argument.reason, argument.value)
+				err := pmm.SetProblemGauge(argument.problemType, argument.reason, argument.value)
+				if err != nil {
+					t.Fatalf("failed to set problem gauge: %v", err)
+				}
 			}
 
 			gotMetrics := append(fakeProblemCounter.ListMetrics(), fakeProblemGauge.ListMetrics()...)
