@@ -38,10 +38,16 @@ RUN GOARCH=${TARGETARCH} make bin/node-problem-detector bin/health-checker bin/l
 
 ARG BASEIMAGE
 FROM --platform=${TARGETPLATFORM} ${BASEIMAGE}
+ARG TARGETARCH
 
 LABEL maintainer="Random Liu <lantaol@google.com>"
 
+RUN apt-get update --fix-missing && apt-get --yes install kubernetes-client
 RUN clean-install util-linux bash libsystemd-dev
+ADD https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.30.0/crictl-v1.30.0-linux-${TARGETARCH}.tar.gz /crictl-v1.30.0-linux-${TARGETARCH}.tar.gz
+RUN tar zxvf crictl-v1.30.0-linux-${TARGETARCH}.tar.gz -C /usr/local/bin
+RUN rm -f crictl-v1.30.0-linux-${TARGETARCH}.tar.gz
+RUN apt-get clean autoclean
 
 # Avoid symlink of /etc/localtime.
 RUN test -h /etc/localtime && rm -f /etc/localtime && cp /usr/share/zoneinfo/UTC /etc/localtime || true
