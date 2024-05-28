@@ -42,7 +42,7 @@ ARG TARGETARCH
 
 LABEL maintainer="Random Liu <lantaol@google.com>"
 
-RUN apt-get update --fix-missing && apt-get --yes install systemctl
+RUN apt-get update --fix-missing && apt-get --yes install systemd
 RUN clean-install util-linux bash libsystemd-dev
 ADD https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.30.0/crictl-v1.30.0-linux-${TARGETARCH}.tar.gz /crictl-v1.30.0-linux-${TARGETARCH}.tar.gz
 RUN tar zxvf crictl-v1.30.0-linux-${TARGETARCH}.tar.gz -C /usr/local/bin
